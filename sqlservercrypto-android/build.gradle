@@ -1,0 +1,82 @@
+apply plugin: 'com.android.library'
+
+// Library version configuration
+ext {
+    LIBRARY_VERSION = '1.0.0'
+    LIBRARY_GROUP = 'org.mtrnd'
+    LIBRARY_ARTIFACT = 'sqlservercrypto-android'
+}
+
+android {
+    namespace 'org.mtrnd.sqlservercrypto'
+    compileSdk 34
+
+    defaultConfig {
+        minSdk 21
+        targetSdk 34
+        
+        // Version information
+        versionCode 1
+        versionName LIBRARY_VERSION
+
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+        consumerProguardFiles "consumer-rules.pro"
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+    }
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+}
+
+dependencies {
+    testImplementation 'junit:junit:4.13.2'
+    androidTestImplementation 'androidx.test.ext:junit:1.1.5'
+    androidTestImplementation 'androidx.test.espresso:espresso-core:3.5.1'
+}
+
+// Task to generate AAR with version in filename
+task buildAarRelease(type: Copy, dependsOn: assembleRelease) {
+    group = 'build'
+    description = 'Builds the release AAR and copies it to the outputs directory with version name'
+    
+    from("$buildDir/outputs/aar")
+    into("$buildDir/outputs/aar/release")
+    include("*.aar")
+    rename { String fileName ->
+        fileName.replace(".aar", "-${LIBRARY_VERSION}.aar")
+    }
+    
+    doLast {
+        println "\n✅ AAR built successfully!"
+        println "📦 Output: ${project.buildDir}/outputs/aar/release/${LIBRARY_ARTIFACT}-${LIBRARY_VERSION}.aar"
+        println "\nTo use this AAR in your project:"
+        println "1. Copy the AAR to your project's libs folder"
+        println "2. Add to your app's build.gradle:"
+        println "   implementation files('libs/${LIBRARY_ARTIFACT}-${LIBRARY_VERSION}.aar')"
+    }
+}
+
+// Task to generate debug AAR
+task buildAarDebug(type: Copy, dependsOn: assembleDebug) {
+    group = 'build'
+    description = 'Builds the debug AAR and copies it to the outputs directory with version name'
+    
+    from("$buildDir/outputs/aar")
+    into("$buildDir/outputs/aar/debug")
+    include("*-debug.aar")
+    rename { String fileName ->
+        fileName.replace("-debug.aar", "-debug-${LIBRARY_VERSION}.aar")
+    }
+    
+    doLast {
+        println "\n✅ Debug AAR built successfully!"
+        println "📦 Output: ${project.buildDir}/outputs/aar/debug/${LIBRARY_ARTIFACT}-debug-${LIBRARY_VERSION}.aar"
+    }
+}
