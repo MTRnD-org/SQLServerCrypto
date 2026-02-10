@@ -18,7 +18,7 @@ public class HexString {
         hexString = removePrefix(hexString);
 
         if (hexString.length() % 2 != 0) {
-            throw new IllegalArgumentException("Invalid number of hexcharacters.");
+            throw new IllegalArgumentException("Invalid number of hex characters.");
         }
 
         if (!HEX_VALIDATION.matcher(hexString).matches()) {

@@ -129,13 +129,8 @@ public class SQLServerCryptoMessage {
         }
 
         int messageLength = decryptedMessage.length - offset;
-        if (integrityBytesLength != (short) 0xffff) {
-            this.messageBytes = new byte[messageLength];
-            System.arraycopy(decryptedMessage, offset, messageBytes, 0, messageLength);
-        } else {
-            this.messageBytes = new byte[messageLength];
-            System.arraycopy(decryptedMessage, offset, messageBytes, 0, messageLength);
-        }
+        this.messageBytes = new byte[messageLength];
+        System.arraycopy(decryptedMessage, offset, messageBytes, 0, messageLength);
 
         if (verify) {
             verifyMessage();
