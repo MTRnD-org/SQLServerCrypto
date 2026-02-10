@@ -9,11 +9,42 @@ This repository provides implementations for SQL Server's [EncryptByPassPhrase](
 
 Both implementations are fully compatible with SQL Server's encryption/decryption functions. The result returned by any implementation can be decrypted using SQL Server's `DecryptByPassPhrase` function, and vice versa.
 
-## Quick Start - Android Library
+## Quick Start - Build as Library / 構建成庫文件
 
-### Testing Without Android SDK
+### 構建Java庫 (JAR) / Build Java Library (JAR)
+
+**最簡單！無需Android SDK！/ Easiest! No Android SDK needed!**
+
+```bash
+# Linux/Mac
+./build-library.sh
+
+# Windows
+build-library.bat
+```
+
+**輸出 / Output:** `library-build/sqlservercrypto-1.0.0.jar`
+
+### 構建Android庫 (AAR) / Build Android Library (AAR)
+
+**用於Android應用 / For Android apps**
+
+```bash
+# Linux/Mac
+./build-aar.sh release
+
+# Windows
+build-aar.bat release
+```
+
+**輸出 / Output:** `sqlservercrypto-android/build/outputs/aar/release/sqlservercrypto-android-1.0.0.aar`
+
+📖 **完整構建指南 / Complete Build Guide:** [LIBRARY_BUILD_GUIDE.md](LIBRARY_BUILD_GUIDE.md)
+
+## Quick Start - Testing Without Android SDK / 無需Android SDK的測試
 
 **Can't build the Java/Android library? Test it without Android SDK!**
+**無法構建？直接測試，不需要Android SDK！**
 
 ```bash
 # Linux/Mac
@@ -26,28 +57,6 @@ test-standalone.bat
 This will compile the library, run all tests, and create a JAR file - **no Android SDK required!**
 
 📖 See [TESTING.md](TESTING.md) for detailed testing guide (includes Chinese/中文說明)
-
-### Building AAR File
-
-To build the Android library as an AAR file for use in other projects:
-
-```bash
-# Linux/Mac
-./build-aar.sh release
-
-# Windows
-build-aar.bat release
-```
-
-Or using Gradle directly:
-```bash
-./gradlew :sqlservercrypto-android:buildAarRelease
-```
-
-The AAR file will be generated at:
-`sqlservercrypto-android/build/outputs/aar/release/sqlservercrypto-android-1.0.0.aar`
-
-For detailed build instructions, see [BUILD_INSTRUCTIONS.md](BUILD_INSTRUCTIONS.md)
 
 ## Overview
 
