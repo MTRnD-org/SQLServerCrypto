@@ -9,6 +9,30 @@ This repository provides implementations for SQL Server's [EncryptByPassPhrase](
 
 Both implementations are fully compatible with SQL Server's encryption/decryption functions. The result returned by any implementation can be decrypted using SQL Server's `DecryptByPassPhrase` function, and vice versa.
 
+## Quick Start - Android Library
+
+### Building AAR File
+
+To build the Android library as an AAR file for use in other projects:
+
+```bash
+# Linux/Mac
+./build-aar.sh release
+
+# Windows
+build-aar.bat release
+```
+
+Or using Gradle directly:
+```bash
+./gradlew :sqlservercrypto-android:buildAarRelease
+```
+
+The AAR file will be generated at:
+`sqlservercrypto-android/build/outputs/aar/release/sqlservercrypto-android-1.0.0.aar`
+
+For detailed build instructions, see [BUILD_INSTRUCTIONS.md](BUILD_INSTRUCTIONS.md)
+
 ## Overview
 
 The *SQLServerCryptoMethod.EncryptByPassPhrase* method requires specifying an encryption version - *SQLServerCryptoVersion*. It applies to the encryption / decryption algorithm used by SQL Server.
