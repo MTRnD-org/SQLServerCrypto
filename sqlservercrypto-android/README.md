@@ -13,7 +13,7 @@ Android version of the SQLServerCrypto library that provides encryption and decr
 
 ## Installation
 
-### Gradle
+### Option 1: As a Module (Recommended for Development)
 
 Add the library to your Android project by including the module in your `settings.gradle`:
 
@@ -28,6 +28,85 @@ dependencies {
     implementation project(':sqlservercrypto-android')
 }
 ```
+
+### Option 2: Using AAR File (For Distribution)
+
+#### Building the AAR
+
+To build the AAR file for use in other projects, run one of the following commands from the root project directory:
+
+**For Release AAR:**
+```bash
+./gradlew :sqlservercrypto-android:buildAarRelease
+```
+
+**For Debug AAR:**
+```bash
+./gradlew :sqlservercrypto-android:buildAarDebug
+```
+
+**Or build both:**
+```bash
+./gradlew :sqlservercrypto-android:assembleRelease :sqlservercrypto-android:assembleDebug
+```
+
+The generated AAR files will be located at:
+- **Release:** `sqlservercrypto-android/build/outputs/aar/release/sqlservercrypto-android-1.0.0.aar`
+- **Debug:** `sqlservercrypto-android/build/outputs/aar/debug/sqlservercrypto-android-debug-1.0.0.aar`
+
+#### Using the AAR in Your Project
+
+**Method 1: Local AAR file**
+
+1. Copy the AAR file to your project's `libs` folder (create it if it doesn't exist)
+2. Add to your app's `build.gradle`:
+
+```gradle
+dependencies {
+    implementation files('libs/sqlservercrypto-android-1.0.0.aar')
+}
+```
+
+**Method 2: Declare libs directory**
+
+1. Copy the AAR file to your project's `libs` folder
+2. Add to your app's `build.gradle`:
+
+```gradle
+repositories {
+    flatDir {
+        dirs 'libs'
+    }
+}
+
+dependencies {
+    implementation(name: 'sqlservercrypto-android-1.0.0', ext: 'aar')
+}
+```
+
+**Method 3: For multi-module projects**
+
+If you have a multi-module project, you can place the AAR in a shared libs directory and reference it:
+
+```gradle
+// In your project-level build.gradle
+allprojects {
+    repositories {
+        google()
+        mavenCentral()
+        flatDir {
+            dirs '../libs'
+        }
+    }
+}
+
+// In your app module's build.gradle
+dependencies {
+    implementation(name: 'sqlservercrypto-android-1.0.0', ext: 'aar')
+}
+```
+
+**Note:** After adding the AAR, make sure to sync your Gradle files.
 
 ## Usage
 
