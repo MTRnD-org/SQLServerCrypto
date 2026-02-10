@@ -1,6 +1,0 @@
-Manifest-Version: 1.0
-Implementation-Title: SQLServerCrypto
-Implementation-Version: 1.0.0
-Implementation-Vendor: MTRnD
-Built-By: runner
-Build-Date: Tue Feb 10 11:09:50 UTC 2026

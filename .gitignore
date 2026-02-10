@@ -286,5 +286,8 @@ output.json
 # Standalone test build directory
 standalone-test-build/
 
+# Library build directory
+library-build/
+
 # Gradle wrapper jar (include wrapper properties for reproducible builds)
 !gradle-wrapper.jar
