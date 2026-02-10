@@ -283,5 +283,8 @@ __pycache__/
 captures/
 output.json
 
+# Standalone test build directory
+standalone-test-build/
+
 # Gradle wrapper jar (include wrapper properties for reproducible builds)
 !gradle-wrapper.jar

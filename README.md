@@ -11,6 +11,22 @@ Both implementations are fully compatible with SQL Server's encryption/decryptio
 
 ## Quick Start - Android Library
 
+### Testing Without Android SDK
+
+**Can't build the Java/Android library? Test it without Android SDK!**
+
+```bash
+# Linux/Mac
+./test-standalone.sh
+
+# Windows
+test-standalone.bat
+```
+
+This will compile the library, run all tests, and create a JAR file - **no Android SDK required!**
+
+📖 See [TESTING.md](TESTING.md) for detailed testing guide (includes Chinese/中文說明)
+
 ### Building AAR File
 
 To build the Android library as an AAR file for use in other projects:
