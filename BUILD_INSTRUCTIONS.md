@@ -4,7 +4,9 @@ This guide provides instructions for building the AAR (Android Archive) file for
 
 ## Prerequisites
 
-- Java Development Kit (JDK) 8 or higher
+- **Java Development Kit (JDK) 11 or higher** (Java 17 recommended)
+  - Android Gradle Plugin 8.1.0 requires Java 11+
+  - Check your Java version: `java -version`
 - Android SDK (automatically downloaded by Gradle if not present)
 - Gradle (included via wrapper - `./gradlew`)
 
@@ -102,6 +104,29 @@ See the [README.md](sqlservercrypto-android/README.md) for instructions on how t
 
 ## Troubleshooting
 
+### Build Fails with Java Version Error
+
+**Error:** `No matching variant of com.android.tools.build:gradle:8.1.0 was found...Incompatible because this component declares a component for use during compile-time, compatible with Java 11`
+
+**Solution:** Android Gradle Plugin 8.1.0 requires Java 11 or higher. 
+
+1. Check your Java version:
+   ```bash
+   java -version
+   ```
+
+2. If you have Java 8, upgrade to Java 11 or higher:
+   - **Ubuntu/Debian:** `sudo apt-get install openjdk-17-jdk`
+   - **macOS:** `brew install openjdk@17`
+   - **Windows:** Download from [Adoptium](https://adoptium.net/) or [Oracle](https://www.oracle.com/java/technologies/downloads/)
+
+3. Set JAVA_HOME (if needed):
+   ```bash
+   export JAVA_HOME=/path/to/java17
+   ```
+
+4. The project has been configured to use Gradle 8.5, which properly supports Java 11+ with Android Gradle Plugin 8.1.0.
+
 ### Build Fails with "SDK not found"
 
 Make sure you have the Android SDK installed. Gradle will attempt to download it automatically, but you may need to set the `ANDROID_HOME` environment variable:
@@ -132,6 +157,12 @@ chmod +x gradlew
 ### GitHub Actions Example
 
 ```yaml
+- name: Set up JDK 17
+  uses: actions/setup-java@v3
+  with:
+    java-version: '17'
+    distribution: 'temurin'
+
 - name: Build AAR
   run: ./gradlew :sqlservercrypto-android:buildAarRelease
 
