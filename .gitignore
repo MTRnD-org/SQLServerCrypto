@@ -282,3 +282,6 @@ __pycache__/
 .navigation/
 captures/
 output.json
+
+# Gradle wrapper jar (include wrapper properties for reproducible builds)
+!gradle-wrapper.jar

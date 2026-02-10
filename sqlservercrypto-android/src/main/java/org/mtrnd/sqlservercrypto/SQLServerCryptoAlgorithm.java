@@ -54,7 +54,18 @@ public class SQLServerCryptoAlgorithm {
     public void setKeyFromPassPhrase(String passphrase) {
         byte[] unicodeBytes = passphrase.getBytes(StandardCharsets.UTF_16LE);
         byte[] hashBytes = hash.digest(unicodeBytes);
-        byte[] keyBytes = Arrays.copyOf(hashBytes, keySize);
+        byte[] keyBytes;
+        
+        if (version == SQLServerCryptoVersion.V1) {
+            // For TripleDES, we need 24 bytes but SQL Server uses 16 bytes from SHA1
+            // TripleDES in Java needs a 24-byte key, so we pad by repeating the first 8 bytes
+            keyBytes = new byte[24];
+            System.arraycopy(hashBytes, 0, keyBytes, 0, 16);
+            System.arraycopy(hashBytes, 0, keyBytes, 16, 8);
+        } else {
+            // For AES256, use 32 bytes from SHA256
+            keyBytes = Arrays.copyOf(hashBytes, keySize);
+        }
         
         String keyAlgorithm = version == SQLServerCryptoVersion.V1 ? "DESede" : "AES";
         this.key = new SecretKeySpec(keyBytes, keyAlgorithm);
