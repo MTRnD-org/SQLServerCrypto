@@ -104,6 +104,35 @@ See the [README.md](sqlservercrypto-android/README.md) for instructions on how t
 
 ## Troubleshooting
 
+### Build Fails with "Incompatible Daemons could not be reused"
+
+**Error:** `Starting a Gradle Daemon, 1 incompatible and 3 stopped Daemons could not be reused`
+
+This happens when old Gradle daemons are cached with incompatible Java versions.
+
+**Solution:**
+
+1. Stop all Gradle daemons:
+   ```bash
+   ./gradlew --stop
+   ```
+
+2. Clean build directories:
+   ```bash
+   # Linux/Mac
+   rm -rf .gradle build sqlservercrypto-android/build
+   
+   # Windows
+   rmdir /s /q .gradle build sqlservercrypto-android\build
+   ```
+
+3. Run the build again:
+   ```bash
+   ./gradlew :sqlservercrypto-android:buildAarRelease
+   ```
+
+The new daemon will start with Java 17 and the correct configuration.
+
 ### Build Fails with Java Version Error
 
 **Error:** `No matching variant of com.android.tools.build:gradle:8.1.0 was found...Incompatible because this component declares a component for use during compile-time, compatible with Java 11`

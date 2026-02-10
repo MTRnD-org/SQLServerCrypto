@@ -1,8 +1,8 @@
-# Gradle Build Fix - Java Version Compatibility
+# Gradle Build Fix - Java Version Compatibility and Daemon Issues
 
 ## Issue Summary
 
-The `build-aar.bat release` command was failing with a Java version compatibility error:
+The `build-aar.bat release` command was failing with Java version compatibility errors:
 
 ```
 No matching variant of com.android.tools.build:gradle:8.1.0 was found.
@@ -10,13 +10,19 @@ Incompatible because this component declares a component compatible with Java 11
 and the consumer needed a component compatible with Java 8
 ```
 
-## Root Cause
+Additionally, even after initial fixes, users might see:
+```
+Starting a Gradle Daemon, 1 incompatible and 3 stopped Daemons could not be reused
+```
 
-1. **Android Gradle Plugin 8.1.0** requires **Java 11 or higher**
-2. **Gradle 8.0** was being used, which has compatibility issues with AGP 8.1.0
-3. Although Java 17 was installed, Gradle wasn't properly configured to use it
+## Root Causes
 
-## Solution Applied
+1. **Android Gradle Plugin 8.1.0** requires **Java 11 or higher** to run
+2. **Gradle 8.0** had compatibility issues with AGP 8.1.0
+3. **Old Gradle daemons** cached with Java 8 configuration needed to be stopped
+4. **Gradle daemon configuration** needed explicit Java auto-detection settings
+
+## Complete Solution
 
 ### 1. Upgraded Gradle Wrapper (8.0 → 8.5)
 
@@ -47,7 +53,38 @@ org.gradle.jvmargs=-Xmx2048m -XX:MaxMetaspaceSize=512m
 - Prevents out-of-memory errors during compilation
 - Optimizes metadata storage
 
-### 3. Updated Documentation
+### 2. Enhanced Gradle Daemon Configuration
+
+**File:** `gradle.properties`
+
+Added auto-detection settings to ensure Gradle daemon uses the correct Java version:
+
+```properties
+# Ensure Gradle daemon uses Java 11+ (required for Android Gradle Plugin 8.1.0)
+org.gradle.java.installations.auto-detect=true
+org.gradle.java.installations.auto-download=false
+```
+
+**Benefits:**
+- Gradle automatically detects Java 17 installation
+- Prevents falling back to Java 8
+- Disables auto-download to use system Java
+
+### 3. Stop Old Gradle Daemons
+
+If you see "incompatible Daemons could not be reused", you need to stop old daemons:
+
+```bash
+./gradlew --stop
+```
+
+Then clean build directories:
+
+```bash
+rm -rf .gradle build */build
+```
+
+### 4. Updated Documentation
 
 **File:** `BUILD_INSTRUCTIONS.md`
 
@@ -146,6 +183,60 @@ The fix has been tested and verified to:
 - Gradle 8.5 provides better error messages and faster builds
 - The JVM configuration prevents memory-related build failures
 - All documentation has been updated to reflect these requirements
+- **Gradle daemon auto-detection** ensures the correct Java version is used
+
+## Troubleshooting Gradle Daemon Issues
+
+### Problem: "Incompatible Daemons could not be reused"
+
+If you see this error after upgrading:
+```
+Starting a Gradle Daemon, 1 incompatible and 3 stopped Daemons could not be reused
+```
+
+**Solution:**
+
+1. Stop all Gradle daemons:
+   ```bash
+   ./gradlew --stop
+   ```
+
+2. Clean build directories:
+   ```bash
+   rm -rf .gradle build sqlservercrypto-android/build
+   # On Windows: rmdir /s /q .gradle build sqlservercrypto-android\build
+   ```
+
+3. Run the build again:
+   ```bash
+   ./gradlew :sqlservercrypto-android:buildAarRelease
+   ```
+
+### Why This Happens
+
+- Old daemons were started with Java 8 or different Gradle version
+- New configuration requires Java 11+ for Gradle daemon
+- Daemons are cached and reused across builds
+- Incompatible daemons must be stopped and recreated
+
+### Verify Daemon is Using Correct Java
+
+After stopping old daemons, check the new daemon:
+
+```bash
+./gradlew --version
+```
+
+You should see:
+- Gradle version: 8.5
+- JVM: 17.x.x (or 11.x.x or higher)
+
+Or run with `--info` to see daemon startup:
+```bash
+./gradlew tasks --info | grep "Starting process"
+```
+
+Should show: `/usr/lib/jvm/.../java-17` (or java-11 or higher)
 
 ## Related Documentation
 
